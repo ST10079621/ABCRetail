@@ -1,0 +1,76 @@
+﻿@model ABCRetail.Models.StockText
+
+@{
+    ViewData["Title"] = "Stock Update";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+        <h1 class="page-title">Stock Update</h1>
+        <p class="text-muted mb-4">Send a stock transaction to Azure Queue Storage</p>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-boxes me-2"></i> Stock Transaction
+            </div>
+            <div class="card-body">
+
+                <form asp-action="Update" method="post">
+
+                    <div class="mb-3">
+                        <label asp-for="ProductName" class="form-label">Product</label>
+                        <input asp-for="ProductName"
+                               class="form-control"
+                               placeholder="Enter product name"
+                               required />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Quantity" class="form-label">Quantity</label>
+                        <input asp-for="Quantity"
+                               type="number"
+                               min="1"
+                               class="form-control"
+                               placeholder="1"
+                               required />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Action" class="form-label">Action</label>
+                        <select asp-for="Action" class="form-select" required>
+                            <option value="">Select Action</option>
+                            <option value="Stock Added">Stock Added</option>
+                            <option value="Stock Removed">Stock Removed</option>
+                            <option value="Stock Adjustment">Stock Adjustment</option>
+                        </select>
+                        <span asp-validation-for="Action" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-orange">
+                            <i class="bi bi-arrow-repeat me-1"></i> Update Stock
+                        </button>
+
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ABCRetail.Models.Customer>
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title mb-0">Customers</h1>
+
+    <a asp-action="Create" class="btn btn-orange">
+        <i class="bi bi-person-plus me-1"></i> Add Customer
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Row Key</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in Model)
+                    {
+                        <tr>
+                            <td>@customer.Name</td>
+                            <td>@customer.Email</td>
+                            <td>@customer.Phone</td>
+                            <td><code class="text-orange">@customer.RowKey</code></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-secondary mt-3 text-center">
+        No customers found. Click <strong>Add Customer</strong> to create one.
+    </div>
+}
+
