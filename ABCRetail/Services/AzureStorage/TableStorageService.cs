@@ -9,10 +9,16 @@ namespace ABCRetail.Services.AzureStorage
 
         public TableStorageService(IConfiguration configuration)
         {
-            _connectionString =
-                configuration.GetConnectionString("AzureStorage")
-                ?? throw new InvalidOperationException(
-                    "Azure Storage connection string is missing.");
+            var connectionString =
+                configuration.GetConnectionString("AzureStorage");
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "AzureStorage was NOT loaded from appsettings.json.");
+            }
+
+            _connectionString = connectionString;
         }
 
         private TableClient GetTableClient(string tableName)
@@ -77,5 +83,77 @@ namespace ABCRetail.Services.AzureStorage
 
             return products;
         }
+
+        public async Task<Product?> GetProductByIdAsync(string rowKey)
+        {
+            var table = GetTableClient("Products");
+
+            try
+            {
+                return await table.GetEntityAsync<Product>(
+                    "Products",
+                    rowKey);
+            }
+            catch (Azure.RequestFailedException ex)
+                when (ex.Status == 404)
+            {
+                return null;
+            }
+        }
+
+        public async Task UpdateProductAsync(Product product)
+        {
+            var table = GetTableClient("Products");
+
+            await table.UpdateEntityAsync(
+                product,
+                product.ETag,
+                TableUpdateMode.Replace);
+        }
+
+        public async Task DeleteProductAsync(string rowKey)
+        {
+            var table = GetTableClient("Products");
+
+            await table.DeleteEntityAsync(
+                "Products",
+                rowKey);
+        }
+
+        // AUTHENTICATION
+
+        public async Task<Customer?> GetCustomerByEmailAsync(string email)
+        {
+            var table = GetTableClient("Customers");
+
+            await foreach (var customer in table.QueryAsync<Customer>(
+                c => c.Email == email))
+            {
+                return customer;
+            }
+
+            return null;
+        }
+
+        public async Task UpdateCustomerAsync(Customer customer)
+        {
+            var table = GetTableClient("Customers");
+
+            await table.UpdateEntityAsync(
+                customer,
+                customer.ETag,
+                TableUpdateMode.Replace);
+        }
+
+        public async Task DeleteCustomerAsync(string rowKey)
+        {
+            var table = GetTableClient("Customers");
+
+            await table.DeleteEntityAsync(
+                "Customers",
+                rowKey);
+        }
+
+
     }
 }

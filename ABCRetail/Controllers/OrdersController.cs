@@ -1,21 +1,21 @@
-﻿using ABCRetail.Services.AzureStorage;
-using ABCRetail.Models;
+﻿using ABCRetail.Models;
+using ABCRetail.Services.AzureFunctions;
 using ABCRetail.Services.AzureStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 namespace ABCRetail.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly QueueStorageService _queueStorageService;
-        private readonly FileStorageService _fileStorageService;
+        private readonly AzureFunctionsService _azureFunctionsService;
 
         public OrdersController(
             QueueStorageService queueStorageService,
-            FileStorageService fileStorageService)
+            AzureFunctionsService azureFunctionsService)
         {
             _queueStorageService = queueStorageService;
-            _fileStorageService = fileStorageService;
+            _azureFunctionsService = azureFunctionsService;
         }
 
         [HttpGet]
@@ -42,24 +42,21 @@ namespace ABCRetail.Controllers
                 .SendMessageAsync(order);
 
             // 2. Create transaction log
-            var logFileName =
-                $"{order.OrderId}_{DateTime.UtcNow:yyyyMMddHHmmss}.log";
-
             var logContent = $"""
-                ABC RETAIL TRANSACTION LOG
-                ===========================
+    ABC RETAIL TRANSACTION LOG
+    ===========================
 
-                Transaction Type: Order Processing
-                Order ID: {order.OrderId}
-                Customer: {order.CustomerName}
-                Product: {order.ProductName}
-                Quantity: {order.Quantity}
-                Transaction Date: {order.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
-                Status: Order Added to Processing Queue
-                """;
+    Transaction Type: Order Processing
+    Order ID: {order.OrderId}
+    Customer: {order.CustomerName}
+    Product: {order.ProductName}
+    Quantity: {order.Quantity}
+    Transaction Date: {order.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
+    Status: Order Added to Processing Queue
+    """;
 
-            await _fileStorageService.CreateLogAsync(
-                logFileName,
+            await _azureFunctionsService.PostTextAsync(
+                "WriteTransactionLogFunction",
                 logContent);
 
             TempData["SuccessMessage"] =

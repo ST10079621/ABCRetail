@@ -1,9 +1,6 @@
-﻿using Azure;
-using Azure.Data.Tables;
-
-namespace ABCRetail.Models
+﻿namespace ABCRetail.Functions.Models
 {
-    public class Customer : ITableEntity
+    public class CustomerRequest
     {
         public string PartitionKey { get; set; } = "Customers";
         public string RowKey { get; set; } = Guid.NewGuid().ToString();
@@ -12,12 +9,7 @@ namespace ABCRetail.Models
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
 
-        // Authentication
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = "Customer";
-
-        public DateTimeOffset? Timestamp { get; set; }
-        public ETag ETag { get; set; }
     }
 }
-

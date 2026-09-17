@@ -1,21 +1,23 @@
-﻿using ABCRetail.Services.AzureStorage;
-using ABCRetail.Models;
+﻿using ABCRetail.Models;
+using ABCRetail.Services.AzureFunctions;
 using ABCRetail.Services.AzureStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABCRetail.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StockController : Controller
     {
         private readonly QueueStorageService _queueStorageService;
-        private readonly FileStorageService _fileStorageService;
+        private readonly AzureFunctionsService _azureFunctionsService;
 
         public StockController(
             QueueStorageService queueStorageService,
-            FileStorageService fileStorageService)
+            AzureFunctionsService azureFunctionsService)
         {
             _queueStorageService = queueStorageService;
-            _fileStorageService = fileStorageService;
+            _azureFunctionsService = azureFunctionsService;
         }
 
         [HttpGet]
@@ -42,23 +44,20 @@ namespace ABCRetail.Controllers
                 .SendMessageAsync(stock);
 
             // 2. Create transaction log
-            var logFileName =
-                $"STOCK_{DateTime.UtcNow:yyyyMMddHHmmssfff}.log";
-
             var logContent = $"""
-                ABC RETAIL TRANSACTION LOG
-                ===========================
+    ABC RETAIL TRANSACTION LOG
+    ===========================
 
-                Transaction Type: Stock Management
-                Product: {stock.ProductName}
-                Quantity: {stock.Quantity}
-                Action: {stock.Action}
-                Transaction Date: {stock.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
-                Status: Stock Update Added to Queue
-                """;
+    Transaction Type: Stock Management
+    Product: {stock.ProductName}
+    Quantity: {stock.Quantity}
+    Action: {stock.Action}
+    Transaction Date: {stock.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
+    Status: Stock Update Added to Queue
+    """;
 
-            await _fileStorageService.CreateLogAsync(
-                logFileName,
+            await _azureFunctionsService.PostTextAsync(
+                "WriteTransactionLogFunction",
                 logContent);
 
             TempData["SuccessMessage"] =

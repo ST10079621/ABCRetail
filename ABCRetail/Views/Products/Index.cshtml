@@ -4,49 +4,107 @@
     ViewData["Title"] = "Products";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="page-title mb-0">Products</h1>
+<div class="container mt-4">
 
-    <a asp-action="Create" class="btn btn-orange">
-        <i class="bi bi-plus-lg me-1"></i> Add Product
-    </a>
-</div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<div class="card">
-    <div class="card-body p-0">
+        <div>
+            <h1>Products</h1>
+            <p class="text-muted">
+                Manage ABC Retail products.
+            </p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn btn-success">
+            + Add Product
+        </a>
+
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No products have been added yet.
+        </div>
+    }
+    else
+    {
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+
+            <table class="table table-bordered table-striped">
+
+                <thead class="table-dark">
                     <tr>
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <th style="width: 200px;">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     @foreach (var product in Model)
                     {
                         <tr>
-                            <td>@product.ProductName</td>
+
                             <td>
-                                <span class="badge bg-secondary">@product.Category</span>
+                                @product.ProductName
                             </td>
-                            <td class="text-orange fw-semibold">
+
+                            <td>
+                                @product.Category
+                            </td>
+
+                            <td>
                                 R @product.Price.ToString("N2")
                             </td>
-                            <td>@product.Quantity</td>
+
+                            <td>
+                                @product.Quantity
+                            </td>
+
+                            <td>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@product.RowKey"
+                                   class="btn btn-sm btn-warning">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@product.RowKey"
+                                   class="btn btn-sm btn-danger">
+                                    Delete
+                                </a>
+
+                            </td>
+
                         </tr>
                     }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-secondary mt-3 text-center">
-        No products found. Click <strong>Add Product</strong> to create one.
-    </div>
-}
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+    <a asp-controller="Admin"
+       asp-action="Dashboard"
+       class="btn btn-secondary mt-3">
+        ← Back to Dashboard
+    </a>
+
+</div>

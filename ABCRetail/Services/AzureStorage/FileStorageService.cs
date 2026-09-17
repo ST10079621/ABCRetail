@@ -15,7 +15,7 @@ namespace ABCRetail.Services.AzureStorage
 
             _shareClient = new ShareClient(
                 connectionString,
-                "logs");
+                "transaction-logs");
 
             _shareClient.CreateIfNotExists();
         }

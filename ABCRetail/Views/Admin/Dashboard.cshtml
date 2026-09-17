@@ -1,0 +1,181 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p class="text-muted">
+                Manage ABC Retail from one place.
+            </p>
+        </div>
+
+        <form asp-controller="Account"
+              asp-action="Logout"
+              method="post">
+
+            <button type="submit"
+                    class="btn btn-outline-danger">
+                Logout
+            </button>
+
+        </form>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Products -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Products
+                    </h5>
+
+                    <p class="display-6">
+                        @ViewBag.ProductCount
+                    </p>
+
+                    <p class="text-muted">
+                        Manage products and stock.
+                    </p>
+
+                    <a asp-controller="Products"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Manage Products
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Customers
+                    </h5>
+
+                    <p class="display-6">
+                        @ViewBag.CustomerCount
+                    </p>
+
+                    <p class="text-muted">
+                        View registered customers.
+                    </p>
+
+                    <a asp-controller="Customers"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Customers
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Orders
+                    </h5>
+
+                    <p class="display-6">
+                        📦
+                    </p>
+
+                    <p class="text-muted">
+                        Process customer orders.
+                    </p>
+
+                    <a asp-controller="Orders"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        View Orders
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Images -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Product Images
+                    </h5>
+
+                    <p class="text-muted">
+                        Upload and manage product images.
+                    </p>
+
+                    <a asp-controller="Images"
+                       asp-action="Upload"
+                       class="btn btn-primary">
+                        Upload Image
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Logs -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Transaction Logs
+                    </h5>
+
+                    <p class="text-muted">
+                        View transaction log files.
+                    </p>
+
+                    <a asp-controller="Logs"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Logs
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        Stock
+                    </h5>
+
+                    <p class="text-muted">
+                        Update Stock.
+                    </p>
+
+                    <a asp-controller="Stock"
+                       asp-action="Update"
+                       class="btn btn-primary">
+                        Manage Stock
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

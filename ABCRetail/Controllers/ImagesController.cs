@@ -1,16 +1,22 @@
-﻿using ABCRetail.Services.AzureStorage;
+﻿using ABCRetail.Services.AzureFunctions;
+using ABCRetail.Services.AzureStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABCRetail.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ImagesController : Controller
     {
         private readonly BlobStorageService _blobStorageService;
+        private readonly AzureFunctionsService _azureFunctionsService;
 
         public ImagesController(
-            BlobStorageService blobStorageService)
+            BlobStorageService blobStorageService,
+            AzureFunctionsService azureFunctionsService)
         {
             _blobStorageService = blobStorageService;
+            _azureFunctionsService = azureFunctionsService;
         }
 
         public async Task<IActionResult> Index()
@@ -67,7 +73,8 @@ namespace ABCRetail.Controllers
 
             using var stream = file.OpenReadStream();
 
-            await _blobStorageService.UploadAsync(
+            await _azureFunctionsService.UploadFileAsync(
+                "UploadProductImageFunction",
                 stream,
                 fileName,
                 file.ContentType);
